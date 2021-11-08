@@ -30,17 +30,13 @@
     <div x-data="app()" x-init="getTasks()" x-cloak class="flex flex-col min-h-screen border-t-8"
          :class="`border-${colorSelected.value}-700`">
         <div class="flex-1">
-            <!-- Header -->
             <div class="bg-cover bg-center bg-no-repeat" :class="`bg-${colorSelected.value}-900`"
                  :style="`background-image: url(${bannerImage})`">
                 <div class="container mx-auto px-4 pt-4 md:pt-10 pb-40"></div>
             </div>
-            <!-- /Header -->
             <div class="container mx-auto px-4 py-4 -mt-40">
-                <!-- Main Page -->
-                <div x-show.immediate="localStorage.getItem('TG-username') && showSettingsPage == false">
-                    <div x-show.transition="localStorage.getItem('TG-username') && showSettingsPage == false">
-                        <!-- Kanban Board -->
+                <div>
+                    <div>
                         <div class="py-4 md:py-8">
                             <div class="flex -mx-4 block overflow-x-auto pb-2">
                                 <template x-for="board in boards" :key="board">
@@ -57,26 +53,20 @@
                                                 class="flex justify-between items-center px-4 py-2 bg-gray-100 sticky top-0">
                                                 <h2 x-text="board" class="font-medium text-gray-800"></h2>
                                             </div>
-
                                             <div class="px-4">
                                                 <div @dragover="onDragOver(event)" @drop="onDrop(event, board)"
                                                      @dragenter="onDragEnter(event)" @dragleave="onDragLeave(event)"
                                                      class="pt-2 pb-20 rounded-lg">
                                                     <template
-                                                        x-for="(t, taskIndex) in tasks.filter(t => t.boardName === board)"
+                                                        x-for="(t, taskIndex) in tasks.filter(t => t.boardName.includes(board))"
                                                         :key="taskIndex">
-                                                        <div :id="t.uuid">
-
-                                                            <div x-show="t.edit == false">
-                                                                <div x-show="t.edit == false"
-                                                                     class="bg-white rounded-lg shadow mb-3 p-2"
-                                                                     draggable="true"
-                                                                     @dragstart="onDragStart(event, t.uuid)"
-                                                                     @dblclick="t.edit = true; setTimeout(() => $refs[t.uuid].focus())">
-                                                                    <div x-text="t.name" class="text-gray-800"></div>
-                                                                    <div x-text="formatDateDisplay(t.date)"
-                                                                         class="text-gray-500 text-xs"></div>
-                                                                </div>
+                                                        <div :id="t.id">
+                                                            <div class="bg-white rounded-lg shadow mb-3 p-2"
+                                                                 draggable="true"
+                                                                 @dragstart="onDragStart(event, t.id)">
+                                                                <div x-text="t.name" class="text-gray-800"></div>
+                                                                <div x-text="t.date"
+                                                                     class="text-gray-500 text-xs"></div>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -97,10 +87,6 @@
     <script>
         function app() {
             return {
-                showSettingsPage: false,
-                openModal: false,
-                username: '',
-                bannerImage: '',
                 colors: [{
                     label: '#3182ce',
                     value: 'blue'
@@ -142,45 +128,14 @@
                     label: '#3182ce',
                     value: 'blue'
                 },
-                dateDisplay: 'toDateString',
                 boards: @this.boards,
-                task: @this.tasks,
-                editTask: {},
                 tasks: [],
-                formatDateDisplay(date) {
-                    if (this.dateDisplay === 'toDateString') return new Date(date).toDateString();
-                    if (this.dateDisplay === 'toLocaleDateString') return new Date(date).toLocaleDateString('en-GB');
-                    return new Date().toLocaleDateString('en-GB');
-                },
                 getTasks() {
-                    // Get Default Settings
-                    const themeFromLocalStorage = JSON.parse(localStorage.getItem('TG-theme'));
-                    this.dateDisplay = localStorage.getItem('TG-dateDisplay') || 'toLocaleDateString';
-                    this.username = localStorage.getItem('TG-username') || '';
-                    this.bannerImage = localStorage.getItem('TG-bannerImage') || '';
-                    this.colorSelected = themeFromLocalStorage || {
-                        label: '#3182ce',
-                        value: 'blue'
-                    };
-                    if (localStorage.getItem('TG-tasks')) {
-                        const tasksFromLocalStorage = JSON.parse(localStorage.getItem('TG-tasks'));
-                        this.tasks = tasksFromLocalStorage.map(t => {
-                            return {
-                                id: t.id,
-                                uuid: t.uuid,
-                                name: t.name,
-                                status: t.status,
-                                boardName: t.boardName,
-                                date: t.date,
-                                edit: false
-                            }
-                        });
-                    } else {
-                        this.tasks = [];
-                    }
+                    this.tasks = undefined;
+                    this.tasks = JSON.parse(@this.tasks);
                 },
-                onDragStart(event, uuid) {
-                    event.dataTransfer.setData('text/plain', uuid);
+                onDragStart(event, id) {
+                    event.dataTransfer.setData('text/plain', id);
                     event.target.classList.add('opacity-5');
                 },
                 onDragOver(event) {
@@ -197,32 +152,13 @@
                     event.stopPropagation(); // Stops some browsers from redirecting.
                     event.preventDefault();
                     event.target.classList.remove('bg-gray-200');
-                    // console.log('Dropped', this);
                     const id = event.dataTransfer.getData('text');
-                    const draggableElement = document.getElementById(id);
-                    const dropzone = event.target;
-                    dropzone.appendChild(draggableElement);
-                    // Update
-                    // Get the existing data
-                    let existing = JSON.parse(localStorage.getItem('TG-tasks'));
-                    let taskIndex = existing.findIndex(t => t.uuid === id);
-                    // Add new data to localStorage Array
-                    existing[taskIndex].boardName = boardName;
-                    existing[taskIndex].date = new Date();
-                    // Save back to localStorage
-                    localStorage.setItem('TG-tasks', JSON.stringify(existing));
-                    // Get Updated Tasks
-                    this.getTasks();
+                @this.emit('updateIssue', id, boardName);
                     // Show flash message
                     this.dispatchCustomEvents('flash', 'Task moved to ' + boardName);
                     event.dataTransfer.clearData();
-                },
-                generateUUID() {
-                    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                        var r = Math.random() * 16 | 0,
-                            v = c == 'x' ? r : (r & 0x3 | 0x8);
-                        return v.toString(16);
-                    });
+                @this.emit('refreshData');
+                    this.getTasks();
                 },
                 dispatchCustomEvents(eventName, message) {
                     let customEvent = new CustomEvent(eventName, {

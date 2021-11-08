@@ -24,7 +24,7 @@
             href="index.html"
             class="inline-block text-2xl font-bold tracking-wider uppercase text-primary-dark dark:text-light"
         >
-            K-WD
+            Issue Tracker
         </a>
 
         <!-- Mobile sub menu button -->
