@@ -56,7 +56,7 @@
                                             <div class="px-4">
                                                 <div @dragover="onDragOver(event)" @drop="onDrop(event, board)"
                                                      @dragenter="onDragEnter(event)" @dragleave="onDragLeave(event)"
-                                                     class="pt-2 pb-20 rounded-lg">
+                                                     class="pt-2 pb-20 rounded-lg" wire:poll.750ms>
                                                     <template
                                                         x-for="(t, taskIndex) in tasks.filter(t => t.boardName.includes(board))"
                                                         :key="taskIndex">

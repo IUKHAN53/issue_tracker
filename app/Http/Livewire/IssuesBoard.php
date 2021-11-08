@@ -22,7 +22,7 @@ class IssuesBoard extends Component
 
     public function render()
     {
-        return view('livewire.issues-board');
+        return view('livewire.issues-board2');
     }
 
     public function updateIssue($id, $board)
@@ -51,7 +51,7 @@ class IssuesBoard extends Component
                 'name' => $issue['title'],
                 'status' => $issue['state'],
                 'boardName' => implode(', ', $issue['labels']),
-                'date' => Carbon::parse($issue['created_at'])->diffForHumans(),
+                'date' => $issue['created_at'],
             ]);
         }
         $this->tasks = $data->toJson();
