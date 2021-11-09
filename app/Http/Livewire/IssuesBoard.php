@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use Carbon\Carbon;
 use GrahamCampbell\GitLab\Facades\GitLab;
+use GrahamCampbell\GitLab\GitLabManager;
 use Livewire\Component;
 
 class IssuesBoard extends Component
@@ -11,11 +12,15 @@ class IssuesBoard extends Component
     public $boards = [];
     public $issues;
     public $tasks;
+    public $gitlab;
     protected $listeners = ['updateIssue','refreshData'];
 
-    public function mount()
+    public function mount(GitLabManager $gitlab)
     {
-        $this->issues = GitLab::issues()->all();
+//        $this->gitlab = GitLab::connection()->setUrl('https://gitlab.webvisum.de');
+//        $this->gitlab = GitLab::connection()->setUrl('https://gitlab.webvisum.de');
+        $this->gitlab = $gitlab;
+        dd($gitlab->issues()->all());
         $this->getBoards();
         $this->getTasks();
     }

@@ -46,7 +46,7 @@ return [
             // 'backoff' => false,
             // 'cache'   => false,
             // 'sudo'    => null,
-            // 'url'     => null,
+             'url'     => 'https://gitlab.webvisum.de',
         ],
 
         'alternative' => [
