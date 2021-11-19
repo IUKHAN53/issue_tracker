@@ -12,24 +12,31 @@ class IssuesBoard extends Component
     public $boards = [];
     public $issues;
     public $tasks;
-    public $gitlab;
-    protected $listeners = ['updateIssue','refreshData'];
 
     public function mount(GitLabManager $gitlab)
     {
-//        $this->gitlab = GitLab::connection()->setUrl('https://gitlab.webvisum.de');
-//        $this->gitlab = GitLab::connection()->setUrl('https://gitlab.webvisum.de');
-        $this->gitlab = $gitlab;
-        dd($gitlab->issues()->all());
+        $this->issues = $gitlab->issues()->all();
         $this->getBoards();
         $this->getTasks();
     }
 
     public function render()
     {
-        return view('livewire.issues-board2');
+        $issues = $this->issues;
+        return view('livewire.issues-board',compact('issues'));
     }
 
+    public function updateTaskLabel($labels)
+    {
+        foreach ($labels as $label){
+            foreach ($label['items'] as $issue){
+                $this->updateIssue($issue['value'],$label['value']);
+            }
+        }
+        $this->issues = GitLab::issues()->all();
+        $this->getBoards();
+        $this->getTasks();
+    }
     public function updateIssue($id, $board)
     {
         $issue = $this->findIssue($id, $board);
@@ -59,7 +66,7 @@ class IssuesBoard extends Component
                 'date' => $issue['created_at'],
             ]);
         }
-        $this->tasks = $data->toJson();
+        $this->tasks = $data;
     }
 
     function findIssue($id,$update = null)
@@ -73,11 +80,4 @@ class IssuesBoard extends Component
         }
         return reset($issue);
     }
-
-    public function refreshData(){
-        $this->getBoards();
-        $this->getTasks();
-    }
-
-
 }

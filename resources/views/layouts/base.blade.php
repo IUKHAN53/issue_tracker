@@ -34,6 +34,7 @@
 
 <body>
 @yield('body')
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.bundle.min.js"></script>
 <script>
     const setup = () => {
@@ -131,5 +132,6 @@
 </script>
 @stack('scripts')
 @livewireScripts
+<script src="https://cdn.jsdelivr.net/gh/livewire/sortable@v0.x.x/dist/livewire-sortable.js"></script>
 </body>
 </html>
