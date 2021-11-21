@@ -22,7 +22,9 @@
                 <x-footer/>
             </div>
             <x-settings_panel/>
-            @livewire('user-setting')
+            @auth
+                @livewire('user-setting')
+            @endauth
             <x-notification_panel/>
             <x-search_panel/>
         </div>

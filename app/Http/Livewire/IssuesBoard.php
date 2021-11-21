@@ -20,7 +20,7 @@ class IssuesBoard extends Component
         } catch (\Exception $e) {
             if ($e->getCode() == 401) {
                 $this->invalid_token = true;
-            }else{
+            } else {
                 dd($e);
             }
         }
@@ -101,10 +101,14 @@ class IssuesBoard extends Component
     {
 //        glpat-z4gVarUesDCqxum1JsWC
         $client = new Client();
-//        $client->authenticate((auth()->user()->personal_access_token == '') ? env('GITLAB_PERSONAL_ACCESS_TOKEN') : auth()->user()->personal_access_token, Client::AUTH_HTTP_TOKEN);
-
-        $client->authenticate('yLsnGUR6ixAmGym2xFNs', Client::AUTH_HTTP_TOKEN);
-        $client->setUrl('http://gitlab.webvisum.de');
+        if (auth()->check()) {
+            $client->authenticate((auth()->user()->personal_access_token == '') ? env('GITLAB_PERSONAL_ACCESS_TOKEN') : auth()->user()->personal_access_token, Client::AUTH_HTTP_TOKEN);
+        } else {
+            $client->authenticate(env('GITLAB_PERSONAL_ACCESS_TOKEN'), Client::AUTH_HTTP_TOKEN);
+        }
+//
+//        $client->authenticate('yLsnGUR6ixAmGym2xFNs', Client::AUTH_HTTP_TOKEN);
+//        $client->setUrl('http://gitlab.webvisum.de');
         return $client;
     }
 }
