@@ -181,7 +181,7 @@
                         class="transition-opacity duration-200 rounded-full dark:opacity-75 dark:hover:opacity-100 focus:outline-none focus:ring dark:focus:opacity-100"
                     >
                         <span class="sr-only">User menu</span>
-{{--                        <img class="w-10 h-10 rounded-full" src="build/images/avatar.jpg" alt=""/>--}}
+                        <img class="w-10 h-10 rounded-full" src="https://picsum.photos/200/300?random=1" alt=""/>
                     </button>
 
                     <!-- User dropdown menu -->
@@ -205,14 +205,7 @@
                         <a
                             href="#"
                             role="menuitem"
-                            class="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary"
-                        >
-                            Your Profile
-                        </a>
-                        <a
-                            href="#"
-                            role="menuitem"
-                            class="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary"
+                            class=" modal-open block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary"
                         >
                             Settings
                         </a>
@@ -229,7 +222,6 @@
                         </a>
                     </div>
                 </div>
-
             @else
                 <a href="{{route('login')}}"
                     class="p-2 transition-colors duration-200 rounded-full text-primary-lighter bg-primary-50 hover:text-primary hover:bg-primary-100 dark:hover:text-light dark:hover:bg-primary-dark dark:bg-dark focus:outline-none focus:bg-primary-100 dark:focus:bg-primary-dark focus:ring-primary-darker"

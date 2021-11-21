@@ -37,6 +37,29 @@
 <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.bundle.min.js"></script>
 <script>
+    var openmodal = document.querySelectorAll('.modal-open')
+    for (var i = 0; i < openmodal.length; i++) {
+        openmodal[i].addEventListener('click', function (event) {
+            event.preventDefault()
+            toggleModal()
+        })
+    }
+    const overlay = document.querySelector('.modal-overlay')
+    overlay.addEventListener('click', toggleModal)
+
+    var closemodal = document.querySelectorAll('.modal-close')
+    for (var i = 0; i < closemodal.length; i++) {
+        closemodal[i].addEventListener('click', toggleModal)
+    }
+
+    function toggleModal() {
+        const body = document.querySelector('body')
+        const modal = document.querySelector('.modal')
+        modal.classList.toggle('opacity-0')
+        modal.classList.toggle('pointer-events-none')
+        body.classList.toggle('modal-active')
+    }
+
     const setup = () => {
         const getTheme = () => {
             if (window.localStorage.getItem('dark')) {
@@ -85,6 +108,9 @@
             setDarkTheme() {
                 this.isDark = true
                 setTheme(this.isDark)
+            },
+            saveSettings() {
+                console.log('saving...')
             },
             color: getColor(),
             selectedColor: 'cyan',

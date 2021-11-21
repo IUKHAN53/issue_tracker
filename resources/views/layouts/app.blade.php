@@ -22,6 +22,7 @@
                 <x-footer/>
             </div>
             <x-settings_panel/>
+            @livewire('user-setting')
             <x-notification_panel/>
             <x-search_panel/>
         </div>

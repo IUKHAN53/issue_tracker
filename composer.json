@@ -8,14 +8,14 @@
         "php": "^7.3|^8.0",
         "ext-json": "*",
         "fruitcake/laravel-cors": "^2.0",
-        "graham-campbell/gitlab": "5.4",
         "guzzlehttp/guzzle": "7.2",
         "http-interop/http-factory-guzzle": "1.0",
         "laravel-frontend-presets/tall": "^4.0",
         "laravel/framework": "^8.65",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "livewire/livewire": "^2.7"
+        "livewire/livewire": "^2.7",
+        "m4tthumphrey/php-gitlab-api": "11.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",
