@@ -21,7 +21,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [\App\Http\Controllers\HomeController::class,'index'])->name('home');
+Route::get('/', [\App\Http\Controllers\IssuesController::class,'index'])->name('issue_tracker');
+Route::get('/issues/active', [\App\Http\Controllers\IssuesController::class,'activeIssues'])->name('active_issues');
+Route::get('/issues/dangling', [\App\Http\Controllers\IssuesController::class,'danglingIssues'])->name('dangling_issues');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', Login::class)

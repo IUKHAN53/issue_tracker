@@ -16,7 +16,7 @@ class IssuesBoard extends Component
     {
 //        $this->issues = [];
         try {
-            $this->issues = $this->getClient()->issues()->all();
+            $this->issues = getClient()->issues()->all();
         } catch (\Exception $e) {
             if ($e->getCode() == 401) {
                 $this->invalid_token = true;
@@ -26,14 +26,13 @@ class IssuesBoard extends Component
         }
         if (!$this->invalid_token) {
             $this->getBoards();
-            $this->getTasks();
+            $this->tasks = getTasks($this->issues);
         }
     }
 
     public function render()
     {
-        $issues = $this->issues;
-        return view('livewire.issues-board', compact('issues'));
+        return view('livewire.issues-board');
     }
 
     public function updateTaskLabel($labels)
@@ -49,7 +48,7 @@ class IssuesBoard extends Component
     public function updateIssue($id, $board)
     {
         $issue = $this->findIssue($id, $board);
-        $this->getClient()->issues()->update($issue['project_id'], $issue['iid'], ['labels' => $board]);
+        getClient()->issues()->update($issue['project_id'], $issue['iid'], ['labels' => $board]);
     }
 
     function getBoards()
@@ -68,23 +67,6 @@ class IssuesBoard extends Component
         $this->boards = $data->flatten()->unique()->toArray();
     }
 
-    function getTasks()
-    {
-        $data = collect();
-        foreach ($this->issues as $issue) {
-            $data->push([
-                'id' => $issue['id'],
-                'iid' => $issue['iid'],
-                'project' => $this->getClient()->projects()->show($issue['project_id'])['name'],
-                'name' => $issue['title'],
-                'status' => $issue['state'],
-                'boardName' => count($issue['labels']) > 0 ? implode(', ', $issue['labels']) : 'No label',
-                'date' => $issue['created_at'],
-            ]);
-        }
-        $this->tasks = $data;
-    }
-
     function findIssue($id, $update = null)
     {
         $issue = array_filter($this->issues,
@@ -97,18 +79,4 @@ class IssuesBoard extends Component
         return reset($issue);
     }
 
-    public function getClient()
-    {
-//        glpat-z4gVarUesDCqxum1JsWC
-        $client = new Client();
-        if (auth()->check()) {
-            $client->authenticate((auth()->user()->personal_access_token == '') ? env('GITLAB_PERSONAL_ACCESS_TOKEN') : auth()->user()->personal_access_token, Client::AUTH_HTTP_TOKEN);
-        } else {
-            $client->authenticate(env('GITLAB_PERSONAL_ACCESS_TOKEN'), Client::AUTH_HTTP_TOKEN);
-        }
-//
-//        $client->authenticate('yLsnGUR6ixAmGym2xFNs', Client::AUTH_HTTP_TOKEN);
-//        $client->setUrl('http://gitlab.webvisum.de');
-        return $client;
-    }
 }
